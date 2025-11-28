@@ -1,0 +1,43 @@
+name : CI / CD Node . js Pipeline # Nom visible du pipeline
+2
+3 on :
+4 push : # D c l e n c h e sur push
+5 branches : [ main ]
+6 pull_request : # D c l e n c h e sur PR
+7 branches : [ main ]
+8
+9 jobs :
+10
+11 test : # Job CI
+12 name : Continuous Integration
+13 runs - on : ubuntu - latest
+14
+15 steps :
+16 - name : Checkout repository
+17 uses : actions / checkout@v4 # R c u p r e le code source
+18
+19 - name : Setup Node . js
+20 uses : actions / setup - node@v4
+21 with :
+22 node - version : 20 # Version Node . js
+23
+24 - name : Install dependencies
+25 run : npm ci
+26
+27 - name : Run unit tests
+28 run : npm test # chec bloque le job deploy
+29
+30 deploy : # Job CD
+31 name : Continuous Deployment
+32 runs - on : ubuntu - latest
+33 needs : test # S ’ e x c u t e seulement si test r u s s i t
+34
+35 steps :
+36 - name : Checkout repository
+37 uses : actions / checkout@v4
+38
+39 - name : Deploy to GitHub Pages
+40 uses : peaceiris / actions -gh - pages@v3
+41 with :
+42 github_token : ${{ secrets . GITHUB_TOKEN }}
+43 publish_dir : ./
